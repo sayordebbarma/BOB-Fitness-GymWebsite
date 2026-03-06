@@ -1,7 +1,7 @@
 import Membership from '../models/Membership.js';
 import User from '../models/User.js';
 
-// GET ALL PLANS (public) 
+// GET ALL PLANS (public)
 export const getMemberships = async (req, res) => {
   try {
     const memberships = await Membership.find({ isActive: true });
@@ -11,12 +11,14 @@ export const getMemberships = async (req, res) => {
   }
 };
 
-// GET SINGLE PLAN 
+// GET SINGLE PLAN
 export const getMembership = async (req, res) => {
   try {
     const membership = await Membership.findById(req.params.id);
     if (!membership) {
-      return res.status(404).json({ success: false, message: 'Membership plan not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'Membership plan not found' });
     }
     res.status(200).json({ success: true, membership });
   } catch (error) {
@@ -24,12 +26,14 @@ export const getMembership = async (req, res) => {
   }
 };
 
-// SUBSCRIBE TO A PLAN (member) 
+// SUBSCRIBE TO A PLAN (member)
 export const subscribeMembership = async (req, res) => {
   try {
     const membership = await Membership.findById(req.params.id);
     if (!membership) {
-      return res.status(404).json({ success: false, message: 'Membership plan not found' });
+      return res
+        .status(404)
+        .json({ success: false, message: 'Membership plan not found' });
     }
 
     // Calculate expiry date
@@ -44,7 +48,7 @@ export const subscribeMembership = async (req, res) => {
         membershipExpiry: expiry,
         membershipStatus: 'active',
       },
-      { new: true }
+      { returnDocument: 'after' }, // { new: true } is deprecated in Mongoose 7
     ).populate('membershipPlan');
 
     res.status(200).json({
@@ -57,7 +61,7 @@ export const subscribeMembership = async (req, res) => {
   }
 };
 
-// ADMIN: CREATE PLAN 
+// ADMIN: CREATE PLAN
 export const createMembership = async (req, res) => {
   try {
     const membership = await Membership.create(req.body);
@@ -67,11 +71,13 @@ export const createMembership = async (req, res) => {
   }
 };
 
-// ─── ADMIN: DELETE PLAN ──────────────────────────────────
+// ADMIN: DELETE PLAN 
 export const deleteMembership = async (req, res) => {
   try {
     await Membership.findByIdAndUpdate(req.params.id, { isActive: false });
-    res.status(200).json({ success: true, message: 'Membership plan deactivated' });
+    res
+      .status(200)
+      .json({ success: true, message: 'Membership plan deactivated' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
