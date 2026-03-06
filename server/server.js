@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
 import membershipRoutes from './routes/membershipRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -18,14 +19,15 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Health check route
+// HEALTH CHECK ROUTE
 app.get('/api/v1/health', (req, res) => {
   res.json({ success: true, message: 'Server is running' });
 });
 
-// Auth routes
+// ROUTES
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/memberships', membershipRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
