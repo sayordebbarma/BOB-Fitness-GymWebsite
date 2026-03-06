@@ -30,6 +30,20 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    membershipPlan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Membership',
+      default: null,
+    },
+    membershipExpiry: {
+      type: Date,
+      default: null,
+    },
+    membershipStatus: {
+      type: String,
+      enum: ['active', 'expired', 'none'],
+      default: 'none',
+    },
   },
   { timestamps: true },
 );

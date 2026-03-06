@@ -4,6 +4,7 @@ import connectDB from './config/db.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
+import membershipRoutes from './routes/membershipRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -24,6 +25,7 @@ app.get('/api/v1/health', (req, res) => {
 
 // Auth routes
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/memberships', membershipRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
