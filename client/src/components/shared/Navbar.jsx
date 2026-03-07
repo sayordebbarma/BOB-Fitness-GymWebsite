@@ -39,7 +39,7 @@ const Navbar = () => {
           to="/"
           className="font-display text-primary text-2xl tracking-widest"
         >
-          ⚡ GYMAPP
+          ⚡ BOB FITNESS
         </Link>
 
         <div className="hidden items-center gap-10 md:flex">

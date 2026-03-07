@@ -5,7 +5,7 @@ const Footer = () => (
     <div className="mx-auto flex max-w-6xl flex-col justify-between gap-8 md:flex-row">
       <div>
         <span className="font-display text-primary text-2xl tracking-widest">
-          ⚡ GYMAPP
+          ⚡ BOB FITNESS
         </span>
         <p className="mt-3 max-w-xs text-sm text-gray-600">
           Premium fitness facility built for those who refuse to settle.

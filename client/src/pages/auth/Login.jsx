@@ -106,13 +106,7 @@ const Login = () => {
         <div className="bg-primary absolute bottom-0 left-0 h-48 w-48 rounded-full opacity-5 blur-3xl" />
 
         <div>
-          <span className="font-display text-primary text-2xl tracking-widest">
-            ⚡ GYMAPP
-          </span>
-        </div>
-
-        <div>
-          <h1 className="font-display mb-6 text-8xl leading-none text-white">
+          <h1 className="font-display my-12 text-8xl leading-none text-white">
             PUSH
             <br />
             YOUR

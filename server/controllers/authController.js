@@ -83,7 +83,8 @@ export const logout = async (req, res) => {
 // GET CURRENT USER
 export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id)
+      .populate('membershipPlan', 'name price features duration');
     res.status(200).json({ success: true, user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

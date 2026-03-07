@@ -189,14 +189,8 @@ const Register = () => {
         <div className="bg-primary absolute top-0 left-0 h-64 w-64 rounded-full opacity-5 blur-3xl" />
         <div className="bg-primary absolute right-0 bottom-0 h-48 w-48 rounded-full opacity-5 blur-3xl" />
 
-        <div className="flex justify-end">
-          <span className="font-display text-primary text-2xl tracking-widest">
-            ⚡ GYMAPP
-          </span>
-        </div>
-
         <div>
-          <h1 className="font-display mb-6 text-8xl leading-none text-white">
+          <h1 className="font-display my-12 text-8xl leading-none text-white">
             START
             <br />
             YOUR
