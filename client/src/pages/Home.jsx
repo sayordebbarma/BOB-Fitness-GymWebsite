@@ -1,6 +1,21 @@
-const Home = () => (
-  <div className="p-8">
-    <h1 className="text-4xl font-bold">Home Page</h1>
-  </div>
-);
+import HeroSection from "./home/HeroSection";
+import StatsSection from "./home/StatsSection";
+import FeaturesSection from "./home/FeaturesSection";
+import PricingSection from "./home/PricingSection";
+import TestimonialsSection from "./home/TestimonialsSection";
+import CTASection from "./home/CTASection";
+
+const Home = () => {
+  return (
+    <main>
+      <HeroSection />
+      <StatsSection />
+      <FeaturesSection />
+      <PricingSection />
+      <TestimonialsSection />
+      <CTASection />
+    </main>
+  );
+};
+
 export default Home;

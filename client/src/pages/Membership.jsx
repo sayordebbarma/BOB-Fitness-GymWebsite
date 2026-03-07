@@ -1,5 +1,5 @@
 const Membership = () => (
-  <div className="p-8">
+  <div className="px-6 py-16 lg:px-24">
     <h1 className="text-4xl font-bold">Membership Page</h1>
   </div>
 );
