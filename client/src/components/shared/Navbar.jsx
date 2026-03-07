@@ -1,25 +1,43 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { user } = useAuth();
 
   return (
-    <nav className="bg-gray-900 text-white px-8 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold">⚡ GymApp</Link>
-      <div className="flex gap-6 items-center">
-        <Link to="/membership" className="hover:text-gray-300 transition">Membership</Link>
+    <nav className="bg-surface border-border flex items-center justify-between border-b px-8 py-4">
+      <Link
+        to="/"
+        className="font-display text-primary text-2xl tracking-widest"
+      >
+        ⚡ GYMAPP
+      </Link>
+      <div className="flex items-center gap-6">
+        <Link
+          to="/membership"
+          className="text-sm tracking-widest text-gray-400 uppercase transition hover:text-white"
+        >
+          Membership
+        </Link>
         {user ? (
           <Link
-            to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'}
-            className="bg-white text-gray-900 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+            to={user.role === "admin" ? "/admin/dashboard" : "/dashboard"}
+            className="bg-primary text-dark font-display px-5 py-2 tracking-widest transition hover:bg-yellow-300"
           >
             Dashboard
           </Link>
         ) : (
           <>
-            <Link to="/login" className="hover:text-gray-300 transition">Login</Link>
-            <Link to="/register" className="bg-white text-gray-900 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <Link
+              to="/login"
+              className="text-sm tracking-widest text-gray-400 uppercase transition hover:text-white"
+            >
+              Login
+            </Link>
+            <Link
+              to="/register"
+              className="bg-primary text-dark font-display px-5 py-2 tracking-widest transition hover:bg-yellow-300"
+            >
               Join Now
             </Link>
           </>
