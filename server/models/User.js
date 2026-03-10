@@ -44,6 +44,31 @@ const userSchema = new mongoose.Schema(
       enum: ['active', 'expired', 'none'],
       default: 'none',
     },
+    points: {
+      type: Number,
+      default: 0,
+    },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    lastCheckIn: {
+      type: Date,
+      default: null,
+    },
+    longestStreak: {
+      type: Number,
+      default: 0,
+    },
+    totalCheckIns: {
+      type: Number,
+      default: 0,
+    },
+    badges: [
+      {
+        type: String,
+      },
+    ],
   },
   { timestamps: true },
 );
