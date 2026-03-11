@@ -1,5 +1,5 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -7,54 +7,110 @@ const DashboardLayout = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
-    <div className="min-h-screen flex bg-dark">
-
+    <div className="bg-dark flex min-h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-surface border-r border-border flex flex-col p-6 fixed h-full">
-        <NavLink to="/" className="font-display text-2xl tracking-widest text-primary mb-10 block">
+      <aside className="bg-surface border-border fixed flex h-full w-64 flex-col border-r p-6">
+        <NavLink
+          to="/"
+          className="font-display text-primary mb-10 block text-2xl tracking-widest"
+        >
           ⚡ BOB FITNESS
         </NavLink>
 
-        <nav className="flex flex-col gap-1 flex-1">
-          {user?.role === 'admin' ? (
+        <nav className="flex flex-1 flex-col gap-1">
+          {user?.role === "admin" ? (
             <>
-              <NavLink to="/admin/dashboard" className={({ isActive }) =>
-                `px-4 py-3 text-sm uppercase tracking-widest transition-colors ${
-                  isActive ? 'bg-primary text-dark font-display' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`
-              }>Dashboard</NavLink>
-              <NavLink to="/admin/members" className={({ isActive }) =>
-                `px-4 py-3 text-sm uppercase tracking-widest transition-colors ${
-                  isActive ? 'bg-primary text-dark font-display' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`
-              }>Members</NavLink>
+              <NavLink
+                to="/admin/dashboard"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/admin/members"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Members
+              </NavLink>
+              <NavLink
+                to="/admin/award-points"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Award Points
+              </NavLink>
             </>
           ) : (
             <>
-              <NavLink to="/dashboard" className={({ isActive }) =>
-                `px-4 py-3 text-sm uppercase tracking-widest transition-colors ${
-                  isActive ? 'bg-primary text-dark font-display' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`
-              }>Dashboard</NavLink>
-              <NavLink to="/membership" className={({ isActive }) =>
-                `px-4 py-3 text-sm uppercase tracking-widest transition-colors ${
-                  isActive ? 'bg-primary text-dark font-display' : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`
-              }>Membership</NavLink>
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/membership"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Membership
+              </NavLink>
+              <NavLink
+                to="/checkin"
+                className={({ isActive }) =>
+                  `px-4 py-3 text-sm tracking-widest uppercase transition-colors ${
+                    isActive
+                      ? "bg-primary text-dark font-display"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  }`
+                }
+              >
+                Check In 🔥
+              </NavLink>
             </>
           )}
         </nav>
 
-        <div className="mt-auto border-t border-border pt-6">
-          <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Logged in as</p>
-          <p className="text-white text-sm font-medium mb-4">{user?.name}</p>
+        <div className="border-border mt-auto border-t pt-6">
+          <p className="mb-1 text-xs tracking-widest text-gray-600 uppercase">
+            Logged in as
+          </p>
+          <p className="mb-4 text-sm font-medium text-white">{user?.name}</p>
           <button
             onClick={handleLogout}
-            className="w-full border border-red-900 text-red-500 font-display tracking-widest py-3 text-sm hover:bg-red-500 hover:text-white transition-colors"
+            className="font-display w-full border border-red-900 py-3 text-sm tracking-widest text-red-500 transition-colors hover:bg-red-500 hover:text-white"
           >
             LOGOUT
           </button>
@@ -62,7 +118,7 @@ const DashboardLayout = () => {
       </aside>
 
       {/* Main content — offset by sidebar width */}
-      <main className="flex-1 ml-64 p-8 min-h-screen">
+      <main className="ml-64 min-h-screen flex-1 p-8">
         <Outlet />
       </main>
     </div>

@@ -11,6 +11,9 @@ import Register from "./pages/auth/Register";
 import MemberDashboard from "./pages/member/Dashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminMembers from "./pages/admin/Members";
+import CheckInPage from "./pages/member/CheckIn";
+import Leaderboard from "./pages/Leaderboard";
+import ComingSoon from "./pages/ComingSoon";
 
 const App = () => {
   useLenis();
@@ -22,6 +25,7 @@ const App = () => {
         <Route path="/membership" element={<Membership />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Route>
 
       <Route
@@ -32,6 +36,7 @@ const App = () => {
         }
       >
         <Route path="/dashboard" element={<MemberDashboard />} />
+        <Route path="/checkin" element={<CheckInPage />} />
       </Route>
 
       <Route
@@ -43,6 +48,7 @@ const App = () => {
       >
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/members" element={<AdminMembers />} />
+        <Route path="/admin/award-points" element={<ComingSoon />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

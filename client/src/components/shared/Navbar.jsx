@@ -44,6 +44,16 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-10 md:flex">
           <Link
+            to="/leaderboard"
+            className={`text-sm tracking-widest uppercase transition-colors ${
+              location.pathname === "/leaderboard"
+                ? "text-primary"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            Leaderboard
+          </Link>
+          <Link
             to="/membership"
             className={`text-sm tracking-widest uppercase transition-colors ${
               location.pathname === "/membership"

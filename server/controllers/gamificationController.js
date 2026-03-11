@@ -76,7 +76,7 @@ export const checkIn = async (req, res) => {
         longestStreak: Math.max(user.longestStreak, newStreak),
         badges: newBadges,
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     res.status(200).json({
@@ -176,7 +176,7 @@ export const awardPoints = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       memberId,
       { $inc: { points } },
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     if (!user) {
