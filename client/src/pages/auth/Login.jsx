@@ -138,12 +138,6 @@ const Login = () => {
       {/* Right — form panel */}
       <div className="flex flex-1 items-center justify-center p-8">
         <div ref={formRef} className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="mb-8 lg:hidden">
-            <span className="font-display text-primary text-2xl tracking-widest">
-              ⚡ GYMAPP
-            </span>
-          </div>
 
           <div ref={titleRef} className="mb-10">
             <h2 className="font-display mb-2 text-5xl tracking-wider text-white">

@@ -28,7 +28,6 @@ const Leaderboard = () => {
         const { data } = await api.get("/gamification/leaderboard");
         setLeaders(data.leaderboard);
       } catch {
-        // fail silently
       } finally {
         setLoading(false);
       }
@@ -84,16 +83,17 @@ const Leaderboard = () => {
   return (
     <div ref={containerRef} className="bg-dark min-h-screen">
       {/* Header */}
-      <div className="lb-header section-padding bg-surface border-border border-b">
+      <div className="lb-header bg-surface border-border border-b px-8 pt-32 pb-12 lg:px-24">
         <div className="container-wide">
           <p className="section-label">Hall of Fame</p>
-          <h1 className="font-display text-6xl leading-none text-white lg:text-8xl">
+          <h1 className="font-display text-5xl leading-none text-white lg:text-7xl">
             LEADER
             <br />
             <span className="text-gray-600">BOARD.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-gray-400">
+          <p className="mt-6 max-w-xl text-sm text-gray-400">
             Earn points by checking in daily. Build streaks, unlock badges, and
+            <br />
             climb to the top.
           </p>
         </div>
@@ -171,11 +171,11 @@ const Leaderboard = () => {
 
       {/* Full leaderboard table */}
       {leaders.length > 0 && (
-        <div className="lb-table section-padding bg-surface">
+        <div className="lb-table section-padding bg-dark">
           <div className="container-wide">
             <p className="section-label mb-8">Full Rankings</p>
 
-            <div className="bg-dark border-border overflow-hidden border">
+            <div className="bg-surface border-border overflow-hidden border">
               <table className="w-full">
                 <thead>
                   <tr className="border-border border-b">

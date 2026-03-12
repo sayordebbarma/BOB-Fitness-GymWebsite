@@ -10,13 +10,11 @@ const HeroSection = () => {
   const headingRef = useRef(null);
   const subRef = useRef(null);
   const ctaRef = useRef(null);
-  const scrollRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.2 });
 
-      // Heading lines animate up one by one
       tl.fromTo(
         headingRef.current.querySelectorAll(".hero-line"),
         { y: 120, opacity: 0 },
@@ -33,25 +31,8 @@ const HeroSection = () => {
           { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
           "-=0.3",
-        )
-        .fromTo(
-          scrollRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.5 },
-          "-=0.2",
         );
 
-      // Scroll indicator bounce loop
-      gsap.to(scrollRef.current, {
-        y: 8,
-        repeat: -1,
-        yoyo: true,
-        duration: 1,
-        ease: "sine.inOut",
-        delay: 1.5,
-      });
-
-      // Parallax on hero background number
       gsap.to(".hero-bg-text", {
         y: -150,
         ease: "none",
@@ -70,30 +51,59 @@ const HeroSection = () => {
   return (
     <section
       ref={heroRef}
-      className="bg-dark relative flex min-h-screen flex-col justify-center overflow-hidden px-8 lg:px-24"
+      className="relative flex min-h-screen flex-col justify-center overflow-hidden px-8 pt-24 lg:px-24"
+      style={{
+        backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1920&q=80')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
+      {/* Left gradient */}
+      <div className="from-dark via-dark/70 absolute inset-0 bg-linear-to-r to-transparent" />
+
       {/* Giant background text */}
       <div className="hero-bg-text pointer-events-none absolute inset-0 flex items-center justify-center select-none">
-        <span className="font-display text-[20vw] whitespace-nowrap text-white opacity-[0.02]">
+        <span
+          className="font-display text-[20vw] tracking-widest whitespace-nowrap"
+          style={{
+            color: "transparent",
+            WebkitTextStroke: "1px rgba(255,255,255,0.2)",
+            backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(255,255,255,0.12) 0%,
+              rgba(255,255,255,0.1) 25%,
+              rgba(255,255,255,0.15) 50%,
+              rgba(255,255,255,0.1) 75%,
+              rgba(255,255,255,0.15) 100%
+              )`,
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            filter: "blur(0.4px)",
+            textShadow: `
+        0 1px 0 rgba(255,255,255,0.06),
+        0 -1px 0 rgba(0,0,0,0.3),
+        inset 0 1px 1px rgba(255,255,255,0.1)
+      `,
+          }}
+        >
           STRONGER
         </span>
       </div>
-
-      {/* Accent line */}
-      <div className="bg-primary absolute top-0 left-0 h-full w-1" />
 
       <div className="relative z-10 max-w-6xl">
         <p className="text-primary font-display mb-6 text-sm tracking-[0.4em] uppercase">
           Est. 2020 · Premium Fitness
         </p>
 
-        <div ref={headingRef} className="mb-8 overflow-hidden">
+        <div ref={headingRef} className="mb-2 overflow-hidden">
           {["FORGE", "YOUR", "BODY."].map((word) => (
             <div key={word} className="overflow-hidden">
               <span
                 className={`hero-line font-display block leading-none ${
                   word === "BODY." ? "text-primary" : "text-white"
-                } text-[12vw] lg:text-[10vw]`}
+                } text-[15vw] sm:text-[12vw] lg:text-[10vw]`}
               >
                 {word}
               </span>
@@ -103,7 +113,7 @@ const HeroSection = () => {
 
         <p
           ref={subRef}
-          className="mb-10 max-w-lg text-xl leading-relaxed text-gray-400"
+          className="mb-6 max-w-lg text-sm leading-relaxed text-gray-300 lg:text-lg"
         >
           Premium fitness facility built for those who refuse to settle. Join a
           community where results are the only language spoken.
@@ -112,28 +122,17 @@ const HeroSection = () => {
         <div ref={ctaRef} className="flex flex-wrap gap-4">
           <Link
             to="/register"
-            className="bg-primary text-dark font-display px-10 py-4 text-xl tracking-widest transition-colors hover:bg-yellow-300"
+            className="bg-primary text-dark font-display px-8 py-4 text-lg tracking-widest transition-colors hover:bg-yellow-300 lg:px-10 lg:text-xl"
           >
             START TODAY
           </Link>
           <Link
             to="/membership"
-            className="font-display hover:border-primary hover:text-primary border border-gray-600 px-10 py-4 text-xl tracking-widest text-white transition-colors"
+            className="font-display hover:border-primary hover:text-primary border border-gray-600 px-8 py-4 text-lg tracking-widest text-white backdrop-blur-sm transition-colors lg:px-10 lg:text-xl"
           >
             VIEW PLANS
           </Link>
         </div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div
-        ref={scrollRef}
-        className="absolute bottom-10 left-8 flex flex-col items-center gap-2 lg:left-24"
-      >
-        <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">
-          Scroll
-        </span>
-        <div className="h-12 w-px bg-linear-to-b from-gray-600 to-transparent" />
       </div>
     </section>
   );

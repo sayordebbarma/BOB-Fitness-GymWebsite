@@ -87,7 +87,7 @@ const Register = () => {
     setLoading(true);
     try {
       await register(form.name, form.email, form.password);
-      toast.success("Account created! Welcome to GymApp 💪");
+      toast.success("Account created! Welcome to BOB Fitness 💪");
       navigate("/dashboard");
     } catch (err) {
       gsap.to(formRef.current, {
@@ -106,11 +106,6 @@ const Register = () => {
       {/* Left — form panel */}
       <div className="flex flex-1 items-center justify-center p-8">
         <div ref={formRef} className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <span className="font-display text-primary text-2xl tracking-widest">
-              ⚡ GYMAPP
-            </span>
-          </div>
 
           <div ref={titleRef} className="mb-10">
             <h2 className="font-display mb-2 text-5xl tracking-wider text-white">
