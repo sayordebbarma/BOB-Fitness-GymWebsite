@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import membershipRoutes from './routes/membershipRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import gamificationRoutes from './routes/gamificationRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -30,6 +31,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/memberships', membershipRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/gamification', gamificationRoutes);
+app.use('/api/v1/payments', paymentRoutes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
