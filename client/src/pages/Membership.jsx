@@ -5,11 +5,13 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import api from "../utils/api";
+import useRazorpay from "../hooks/useRazorpay";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Membership = () => {
   const { user } = useAuth();
+  const { initiatePayment } = useRazorpay();
   const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -72,21 +74,15 @@ const Membership = () => {
 
   const handleSubscribe = async (planId) => {
     if (!user) {
-      toast.error("Please login to subscribe");
-      navigate("/login");
+      toast.error('Please login to subscribe');
+      navigate('/login');
       return;
     }
 
-    setSubscribing(planId);
-    try {
-      await api.post(`/memberships/subscribe/${planId}`);
-      toast.success("Membership activated successfully! 💪");
-      navigate("/dashboard");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Subscription failed");
-    } finally {
-      setSubscribing(null);
-    }
+    await initiatePayment({
+      membershipId: planId,
+      onSuccess: () => navigate('/dashboard'),
+    });
   };
 
   const faqs = [
@@ -121,7 +117,8 @@ const Membership = () => {
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-relaxed text-gray-400">
             No contracts. No hidden fees. Just pure access to the best fitness
-            <br />facility in town. Upgrade or cancel anytime.
+            <br />
+            facility in town. Upgrade or cancel anytime.
           </p>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import razorpay from '../utils/razorpay.js';
+import getRazorpay from '../utils/razorpay.js';
 import Membership from '../models/Membership.js';
 import User from '../models/User.js';
 
@@ -17,10 +17,11 @@ export const createOrder = async (req, res) => {
     }
 
     // Razorpay amount is in paise (1 INR = 100 paise)
+    const razorpay = getRazorpay();
     const order = await razorpay.orders.create({
       amount: membership.price * 100,
       currency: 'INR',
-      receipt: `receipt_${req.user.id}_${Date.now()}`,
+      receipt: `rcpt_${Date.now()}`,
       notes: {
         userId: req.user.id,
         membershipId: membership._id.toString(),
@@ -42,6 +43,7 @@ export const createOrder = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('Razorpay createOrder error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
