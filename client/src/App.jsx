@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminMembers from "./pages/admin/Members";
 import CheckInPage from "./pages/member/CheckIn";
 import Leaderboard from "./pages/Leaderboard";
+import Contact from './pages/Contact';
 import ComingSoon from "./pages/ComingSoon";
 
 const ScrollToTop = () => {
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
 
         <Route

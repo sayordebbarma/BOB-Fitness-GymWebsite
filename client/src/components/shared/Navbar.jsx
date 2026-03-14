@@ -89,6 +89,7 @@ const Navbar = () => {
     { to: "/", label: "Home" },
     { to: "/membership", label: "Membership" },
     { to: "/leaderboard", label: "Leaderboard" },
+    { to: "/contact", label: "Contact us" }
   ];
 
   return (

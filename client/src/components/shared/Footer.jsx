@@ -59,6 +59,7 @@ const Footer = () => (
               ["/", "Home"],
               ["/membership", "Membership"],
               ["/leaderboard", "Leaderboard"],
+              ["/contact", "Contact"],
               ["/login", "Login"],
               ["/register", "Join Now"],
             ].map(([to, label]) => (

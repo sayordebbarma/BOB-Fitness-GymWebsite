@@ -191,7 +191,7 @@ const AdminDashboard = () => {
                 >
                   <div className="flex items-center gap-4">
                     {/* Avatar */}
-                    <div className="bg-primary/10 border-primary/20 flex h-9 w-9 flex-shrink-0 items-center justify-center border">
+                    <div className="bg-primary/10 border-primary/20 flex h-9 w-9 shrink-0 items-center justify-center border">
                       <span className="font-display text-primary text-sm">
                         {member.name?.charAt(0).toUpperCase()}
                       </span>
