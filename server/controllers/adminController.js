@@ -64,11 +64,10 @@ export const updateMember = async (req, res) => {
 // DELETE MEMBER
 export const deleteMember = async (req, res) => {
   try {
-    // Soft delete — don't actually remove from DB
     const member = await User.findByIdAndUpdate(
       req.params.id,
-      { isActive: false },
-      { returnDocument: 'after' },
+      { $set: { isActive: false } },
+      { new: true }
     );
 
     if (!member)
@@ -177,6 +176,25 @@ export const assignMembership = async (req, res) => {
       message: `${membership.name} plan assigned to ${member.name}`,
       member,
     });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// REACTIVATE MEMBER
+export const reactivateMember = async (req, res) => {
+  try {
+    const member = await User.findByIdAndUpdate(
+      req.params.id,
+      { isActive: true },
+      { returnDocument: 'after' }
+    );
+
+    if (!member) {
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Member reactivated successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

@@ -6,6 +6,7 @@ import {
   deleteMember,
   getDashboardStats,
   assignMembership,
+  reactivateMember,
 } from '../controllers/adminController.js';
 import { protect, requireRole } from '../middleware/authMiddleware.js';
 
@@ -19,5 +20,6 @@ router.get('/members/:id', getMember);
 router.put('/members/:id', updateMember);
 router.delete('/members/:id', deleteMember);
 router.post('/members/:id/assign-membership', assignMembership);
+router.put('/members/:id/reactivate', protect, requireRole('admin'), reactivateMember);
 
 export default router;

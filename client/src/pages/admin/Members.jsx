@@ -1,17 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import toast from 'react-hot-toast';
-import api from '../../utils/api';
+import { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import toast from "react-hot-toast";
+import api from "../../utils/api";
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status, isActive }) => {
+  if (!isActive)
+    return (
+      <span className="font-display bg-primary/10 text-primary px-3 py-1 text-xs tracking-widest">
+        DEACTIVATED
+      </span>
+    );
+
   const styles = {
-    active: 'bg-primary/10 text-primary',
-    expired: 'bg-red-500/10 text-red-400',
-    none: 'bg-gray-800 text-gray-500',
+    active: "bg-green-500/10 text-green-400",
+    expired: "bg-red-500/10 text-red-400",
+    none: "bg-gray-800 text-gray-500",
   };
+
   return (
-    <span className={`text-xs font-display tracking-widest px-3 py-1 ${styles[status] || styles.none}`}>
-      {status?.toUpperCase() || 'NONE'}
+    <span
+      className={`font-display px-3 py-1 text-xs tracking-widest ${styles[status] || styles.none}`}
+    >
+      {status?.toUpperCase() || "NONE"}
     </span>
   );
 };
@@ -21,12 +31,13 @@ const AdminMembers = () => {
   const [members, setMembers] = useState([]);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState(null);
   const [assigning, setAssigning] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState("");
   const [deactivating, setDeactivating] = useState(null);
+  const [reactivating, setReactivating] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -35,13 +46,13 @@ const AdminMembers = () => {
   const fetchData = async () => {
     try {
       const [membersRes, plansRes] = await Promise.all([
-        api.get('/admin/members'),
-        api.get('/memberships'),
+        api.get("/admin/members"),
+        api.get("/memberships"),
       ]);
       setMembers(membersRes.data.members);
       setPlans(plansRes.data.memberships);
     } catch {
-      toast.error('Failed to load data');
+      toast.error("Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -50,30 +61,36 @@ const AdminMembers = () => {
   useEffect(() => {
     if (loading) return;
     const ctx = gsap.context(() => {
-      gsap.fromTo('.page-header',
+      gsap.fromTo(
+        ".page-header",
         { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }
+        { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
       );
-      gsap.fromTo('.members-table',
+      gsap.fromTo(
+        ".members-table",
         { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', delay: 0.2 }
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out", delay: 0.2 },
       );
     }, containerRef);
     return () => ctx.revert();
   }, [loading]);
 
-  const filtered = members.filter(m => {
+  const filtered = members.filter((m) => {
     const matchSearch =
       m.name.toLowerCase().includes(search.toLowerCase()) ||
       m.email.toLowerCase().includes(search.toLowerCase());
+
     const matchFilter =
-      filter === 'all' ||
-      m.membershipStatus === filter;
+      filter === "all" ||
+      (filter === "deactivated"
+        ? !m.isActive
+        : m.isActive && m.membershipStatus === filter);
+
     return matchSearch && matchFilter;
   });
 
   const handleAssignMembership = async () => {
-    if (!selectedPlan) return toast.error('Select a plan first');
+    if (!selectedPlan) return toast.error("Select a plan first");
     setAssigning(true);
     try {
       await api.post(`/admin/members/${selectedMember._id}/assign-membership`, {
@@ -81,10 +98,10 @@ const AdminMembers = () => {
       });
       toast.success(`Plan assigned to ${selectedMember.name}`);
       setSelectedMember(null);
-      setSelectedPlan('');
+      setSelectedPlan("");
       fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to assign plan');
+      toast.error(err.response?.data?.message || "Failed to assign plan");
     } finally {
       setAssigning(false);
     }
@@ -98,46 +115,66 @@ const AdminMembers = () => {
       toast.success(`${memberName} deactivated`);
       fetchData();
     } catch {
-      toast.error('Failed to deactivate member');
+      toast.error("Failed to deactivate member");
     } finally {
       setDeactivating(null);
     }
   };
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  const handleReactivate = async (memberId, memberName) => {
+    if (!confirm(`Reactivate ${memberName}?`)) return;
+    setReactivating(memberId);
+    try {
+      await api.put(`/admin/members/${memberId}/reactivate`);
+      toast.success(`${memberName} reactivated`);
+      fetchData();
+    } catch {
+      toast.error("Failed to reactivate member");
+    } finally {
+      setReactivating(null);
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
+      </div>
+    );
 
   return (
-    <div ref={containerRef} className="max-w-6xl mx-auto">
-
+    <div ref={containerRef} className="mx-auto max-w-6xl">
       {/* Header */}
       <div className="page-header mb-10">
-        <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Admin Panel</p>
-        <h1 className="font-display text-5xl text-white tracking-wider">MEMBERS</h1>
-        <p className="text-gray-500 text-sm mt-2">{members.length} total members</p>
+        <p className="mb-1 text-xs tracking-widest text-gray-500 uppercase">
+          Admin Panel
+        </p>
+        <h1 className="font-display text-5xl tracking-wider text-white">
+          MEMBERS
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">
+          {members.length} total members
+        </p>
       </div>
 
       {/* Search + Filters */}
-      <div className="members-table flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="members-table mb-6 flex flex-col gap-4 sm:flex-row">
         <input
           type="text"
           placeholder="Search by name or email..."
           value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="flex-1 bg-surface border border-border px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-gray-600"
+          onChange={(e) => setSearch(e.target.value)}
+          className="bg-surface border-border focus:border-primary flex-1 border px-4 py-3 text-sm text-white transition-colors outline-none placeholder:text-gray-600"
         />
-        <div className="flex gap-2 flex-wrap">
-          {['all', 'active', 'expired', 'none'].map(f => (
+        <div className="flex flex-wrap gap-2">
+          {["all", "active", "deactivated", "expired", "none"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-3 text-xs font-display tracking-widest uppercase transition-colors ${
+              className={`font-display px-4 py-3 text-xs tracking-widest uppercase transition-colors ${
                 filter === f
-                  ? 'bg-primary text-dark'
-                  : 'border border-border text-gray-400 hover:border-primary hover:text-primary'
+                  ? "bg-primary text-dark"
+                  : "border-border hover:border-primary hover:text-primary border text-gray-400"
               }`}
             >
               {f}
@@ -147,105 +184,137 @@ const AdminMembers = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-surface border border-border overflow-x-auto">
+      <div className="bg-surface border-border overflow-x-auto border">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border">
-              <th className="text-left px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal">
+            <tr className="border-border border-b">
+              <th className="px-3 py-4 text-left text-xs font-normal tracking-widest text-gray-500 uppercase sm:px-6">
                 Member
               </th>
-              <th className="text-left px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal hidden sm:table-cell">
+              <th className="hidden px-3 py-4 text-left text-xs font-normal tracking-widest text-gray-500 uppercase sm:table-cell sm:px-6">
                 Plan
               </th>
-              <th className="text-left px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal">
+              <th className="px-3 py-4 text-left text-xs font-normal tracking-widest text-gray-500 uppercase sm:px-6">
                 Status
               </th>
-              <th className="text-left px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal hidden md:table-cell">
+              <th className="hidden px-3 py-4 text-left text-xs font-normal tracking-widest text-gray-500 uppercase sm:px-6 md:table-cell">
                 Expiry
               </th>
-              <th className="text-left px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal hidden md:table-cell">
+              <th className="hidden px-3 py-4 text-left text-xs font-normal tracking-widest text-gray-500 uppercase sm:px-6 md:table-cell">
                 Joined
               </th>
-              <th className="text-right px-3 sm:px-6 py-4 text-gray-500 text-xs uppercase tracking-widest font-normal">
+              <th className="px-3 py-4 text-right text-xs font-normal tracking-widest text-gray-500 uppercase sm:px-6">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-border divide-y">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-gray-600 text-sm">
+                <td
+                  colSpan={6}
+                  className="px-6 py-12 text-center text-sm text-gray-600"
+                >
                   No members found.
                 </td>
               </tr>
             ) : (
               filtered.map((member) => (
-                <tr key={member._id} className="hover:bg-white/[0.02] transition-colors">
-
+                <tr
+                  key={member._id}
+                  className="transition-colors hover:bg-white/2"
+                >
                   {/* Member info — always visible */}
-                  <td className="px-3 sm:px-6 py-4">
+                  <td className="px-3 py-4 sm:px-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
+                      <div className="bg-primary/10 border-primary/20 flex h-8 w-8 shrink-0 items-center justify-center border">
                         <span className="font-display text-primary text-xs">
                           {member.name?.charAt(0).toUpperCase()}
                         </span>
                       </div>
                       <div>
-                        <p className="text-white text-sm">{member.name}</p>
-                        <p className="text-gray-600 text-xs">{member.email}</p>
+                        <p className="text-sm text-white">{member.name}</p>
+                        <p className="text-xs text-gray-600">{member.email}</p>
                       </div>
                     </div>
                   </td>
 
                   {/* Plan — hidden on mobile */}
-                  <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
-                    <span className="text-gray-400 text-sm">
-                      {member.membershipPlan?.name || '—'}
+                  <td className="hidden px-3 py-4 sm:table-cell sm:px-6">
+                    <span className="text-sm text-gray-400">
+                      {member.membershipPlan?.name || "—"}
                     </span>
                   </td>
 
                   {/* Status — always visible */}
-                  <td className="px-3 sm:px-6 py-4">
-                    <StatusBadge status={member.membershipStatus} />
+                  <td className="px-3 py-4 sm:px-6">
+                    <StatusBadge
+                      status={member.membershipStatus}
+                      isActive={member.isActive}
+                    />
                   </td>
 
                   {/* Expiry — hidden on mobile */}
-                  <td className="px-3 sm:px-6 py-4 hidden md:table-cell">
-                    <span className="text-gray-500 text-xs">
+                  <td className="hidden px-3 py-4 sm:px-6 md:table-cell">
+                    <span className="text-xs text-gray-500">
                       {member.membershipExpiry
-                        ? new Date(member.membershipExpiry).toLocaleDateString('en-IN', {
-                            day: 'numeric', month: 'short', year: 'numeric'
-                          })
-                        : '—'
-                      }
+                        ? new Date(member.membershipExpiry).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )
+                        : "—"}
                     </span>
                   </td>
 
                   {/* Joined — hidden on mobile */}
-                  <td className="px-3 sm:px-6 py-4 hidden md:table-cell">
-                    <span className="text-gray-500 text-xs">
-                      {new Date(member.createdAt).toLocaleDateString('en-IN', {
-                        day: 'numeric', month: 'short', year: 'numeric'
+                  <td className="hidden px-3 py-4 sm:px-6 md:table-cell">
+                    <span className="text-xs text-gray-500">
+                      {new Date(member.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
                       })}
                     </span>
                   </td>
 
                   {/* Actions — always visible, stacked on mobile */}
-                  <td className="px-3 sm:px-6 py-4">
-                    <div className="flex flex-col sm:flex-row items-end sm:items-center justify-end gap-2">
+                  <td className="px-3 py-4 sm:px-6">
+                    <div className="flex flex-col items-end justify-end gap-2 sm:flex-row sm:items-center">
                       <button
-                        onClick={() => { setSelectedMember(member); setSelectedPlan(''); }}
-                        className="text-xs font-display tracking-widest px-3 py-2 border border-border text-gray-400 hover:border-primary hover:text-primary transition-colors w-full sm:w-auto text-center"
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setSelectedPlan("");
+                        }}
+                        className="font-display border-border hover:border-primary hover:text-primary w-full border px-3 py-2 text-center text-xs tracking-widest text-gray-400 transition-colors sm:w-auto"
                       >
                         ASSIGN
                       </button>
-                      <button
-                        onClick={() => handleDeactivate(member._id, member.name)}
-                        disabled={deactivating === member._id || !member.isActive}
-                        className="text-xs font-display tracking-widest px-3 py-2 border border-red-900 text-red-500 hover:bg-red-500 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed w-full sm:w-auto text-center"
-                      >
-                        {deactivating === member._id ? '...' : 'DEACTIVATE'}
-                      </button>
+
+                      {member.isActive ? (
+                        <button
+                          onClick={() =>
+                            handleDeactivate(member._id, member.name)
+                          }
+                          disabled={deactivating === member._id}
+                          className="font-display w-full border border-red-900 px-3 py-2 text-center text-xs tracking-widest text-red-500 transition-colors hover:bg-red-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30 sm:w-auto"
+                        >
+                          {deactivating === member._id ? "..." : "DEACTIVATE"}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleReactivate(member._id, member.name)
+                          }
+                          disabled={reactivating === member._id}
+                          className="font-display w-full border border-green-900 px-3 py-2 text-center text-xs tracking-widest text-green-500 transition-colors hover:bg-green-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-30 sm:w-auto"
+                        >
+                          {reactivating === member._id ? "..." : "REACTIVATE"}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -256,58 +325,69 @@ const AdminMembers = () => {
       </div>
 
       {/* Results count */}
-      <p className="text-gray-600 text-xs mt-4">
+      <p className="mt-4 text-xs text-gray-600">
         Showing {filtered.length} of {members.length} members
       </p>
 
       {/* Assign Membership Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-surface border border-border w-full max-w-md p-8">
-
-            <div className="flex items-start justify-between mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="bg-surface border-border w-full max-w-md border p-8">
+            <div className="mb-6 flex items-start justify-between">
               <div>
-                <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Assign Plan</p>
-                <h3 className="font-display text-2xl text-white tracking-wider">
+                <p className="mb-1 text-xs tracking-widest text-gray-500 uppercase">
+                  Assign Plan
+                </p>
+                <h3 className="font-display text-2xl tracking-wider text-white">
                   {selectedMember.name.toUpperCase()}
                 </h3>
-                <p className="text-gray-500 text-xs mt-1">{selectedMember.email}</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  {selectedMember.email}
+                </p>
               </div>
               <button
                 onClick={() => setSelectedMember(null)}
-                className="text-gray-600 hover:text-white transition-colors text-xl"
+                className="text-xl text-gray-600 transition-colors hover:text-white"
               >
                 ✕
               </button>
             </div>
 
             {/* Current plan */}
-            <div className="bg-dark border border-border p-4 mb-6">
-              <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Current Plan</p>
-              <p className="text-white font-display tracking-widest">
-                {selectedMember.membershipPlan?.name || 'None'}
+            <div className="bg-dark border-border mb-6 border p-4">
+              <p className="mb-1 text-xs tracking-widest text-gray-500 uppercase">
+                Current Plan
+              </p>
+              <p className="font-display tracking-widest text-white">
+                {selectedMember.membershipPlan?.name || "None"}
               </p>
             </div>
 
             {/* Plan selector */}
-            <div className="flex flex-col gap-3 mb-6">
-              <p className="text-gray-500 text-xs uppercase tracking-widest">Select New Plan</p>
-              {plans.map(plan => (
+            <div className="mb-6 flex flex-col gap-3">
+              <p className="text-xs tracking-widest text-gray-500 uppercase">
+                Select New Plan
+              </p>
+              {plans.map((plan) => (
                 <button
                   key={plan._id}
                   onClick={() => setSelectedPlan(plan._id)}
-                  className={`flex items-center justify-between p-4 border transition-colors ${
+                  className={`flex items-center justify-between border p-4 transition-colors ${
                     selectedPlan === plan._id
-                      ? 'border-primary bg-primary/10'
-                      : 'border-border hover:border-gray-600'
+                      ? "border-primary bg-primary/10"
+                      : "border-border hover:border-gray-600"
                   }`}
                 >
-                  <span className={`font-display tracking-widest ${
-                    selectedPlan === plan._id ? 'text-primary' : 'text-white'
-                  }`}>
+                  <span
+                    className={`font-display tracking-widest ${
+                      selectedPlan === plan._id ? "text-primary" : "text-white"
+                    }`}
+                  >
                     {plan.name.toUpperCase()}
                   </span>
-                  <span className="text-gray-400 text-sm">₹{plan.price}/mo</span>
+                  <span className="text-sm text-gray-400">
+                    ₹{plan.price}/mo
+                  </span>
                 </button>
               ))}
             </div>
@@ -315,16 +395,16 @@ const AdminMembers = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setSelectedMember(null)}
-                className="flex-1 border border-border text-gray-400 font-display tracking-widest py-3 text-sm hover:border-gray-500 transition-colors"
+                className="border-border font-display flex-1 border py-3 text-sm tracking-widest text-gray-400 transition-colors hover:border-gray-500"
               >
                 CANCEL
               </button>
               <button
                 onClick={handleAssignMembership}
                 disabled={!selectedPlan || assigning}
-                className="flex-1 bg-primary text-dark font-display tracking-widest py-3 text-sm hover:bg-yellow-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary text-dark font-display flex-1 py-3 text-sm tracking-widest transition-colors hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {assigning ? 'ASSIGNING...' : 'CONFIRM'}
+                {assigning ? "ASSIGNING..." : "CONFIRM"}
               </button>
             </div>
           </div>
