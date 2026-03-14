@@ -1,5 +1,7 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import useLenis from "./hooks/useLenis";
+import { Toaster } from "react-hot-toast";
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
@@ -15,44 +17,71 @@ import CheckInPage from "./pages/member/CheckIn";
 import Leaderboard from "./pages/Leaderboard";
 import ComingSoon from "./pages/ComingSoon";
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname]);
+
+  return null;
+};
+
 const App = () => {
   useLenis();
 
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/membership" element={<Membership />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-      </Route>
+    <>
+      <ScrollToTop />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "#1a1a1a",
+            color: "#fff",
+            border: "1px solid #333",
+          },
+        }}
+      />
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/membership" element={<Membership />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+        </Route>
 
-      <Route
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/dashboard" element={<MemberDashboard />} />
-        <Route path="/checkin" element={<CheckInPage />} />
-      </Route>
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<MemberDashboard />} />
+          <Route path="/checkin" element={<CheckInPage />} />
+        </Route>
 
-      <Route
-        element={
-          <ProtectedRoute adminOnly>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/members" element={<AdminMembers />} />
-        <Route path="/admin/award-points" element={<ComingSoon />} />
-      </Route>
+        <Route
+          element={
+            <ProtectedRoute adminOnly>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/members" element={<AdminMembers />} />
+          <Route path="/admin/award-points" element={<ComingSoon />} />
+        </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 };
 

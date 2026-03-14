@@ -14,6 +14,8 @@ const useLenis = () => {
       smoothTouch: false,
     });
 
+    window.lenis = lenis;
+
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000);
     });
@@ -21,6 +23,7 @@ const useLenis = () => {
     gsap.ticker.lagSmoothing(0);
 
     return () => {
+      window.lenis = null;
       lenis.destroy();
       gsap.ticker.remove((time) => lenis.raf(time * 1000));
     };
