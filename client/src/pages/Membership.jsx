@@ -22,7 +22,11 @@ const Membership = () => {
     const fetchPlans = async () => {
       try {
         const { data } = await api.get("/memberships");
-        setPlans(data.memberships);
+        const order = ["Basic", "Pro", "Elite"];
+        const sorted = data.memberships.sort(
+          (a, b) => order.indexOf(a.name) - order.indexOf(b.name),
+        );
+        setPlans(sorted);
       } catch {
         toast.error("Failed to load membership plans");
       } finally {
@@ -74,14 +78,14 @@ const Membership = () => {
 
   const handleSubscribe = async (planId) => {
     if (!user) {
-      toast.error('Please login to subscribe');
-      navigate('/login');
+      toast.error("Please login to subscribe");
+      navigate("/login");
       return;
     }
 
     await initiatePayment({
       membershipId: planId,
-      onSuccess: () => navigate('/dashboard'),
+      onSuccess: () => navigate("/dashboard"),
     });
   };
 
@@ -139,8 +143,10 @@ const Membership = () => {
                 return (
                   <div
                     key={plan._id}
-                    className={`plan-card relative flex flex-col p-10 ${
-                      isHighlighted ? "bg-primary" : "bg-dark"
+                    className={`plan-card relative flex flex-col p-10 transition-all ${
+                      isHighlighted
+                        ? "bg-primary z-10 shadow-2xl md:-my-6"
+                        : "bg-dark border-border border"
                     }`}
                   >
                     {isHighlighted && (
