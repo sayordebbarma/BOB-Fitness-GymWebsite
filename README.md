@@ -2,13 +2,33 @@
 
 A full-stack gym management platform built with the MERN stack. Features membership management, daily check-ins, gamification with streaks and badges, a public leaderboard, and a dark editorial UI with GSAP animations and Lenis smooth scroll.
 
-**Live Demo:** [your-vercel-url.vercel.app](https://your-vercel-url.vercel.app)
+**Live Demo:** [bobfitness.vercel.app](https://bobfitness.vercel.app)
 
 ---
 
 ## Screenshots
 
-> _Add screenshots after deployment_
+### Home
+![Hero](./screenshots/hero.png)
+![Why choose us](./screenshots/why-choose-us.png)
+
+
+### Public Pages
+![Membership](./screenshots/membership.png)
+![Leaderboard](./screenshots/leaderboard.png)
+![Contact](./screenshots/contact.png)
+
+### Auth
+![Login](./screenshots/login.png)
+![Register](./screenshots/register.png)
+
+### Member
+![Member Dashboard](./screenshots/member-dashboard.png)
+![Check In](./screenshots/checkin.png)
+
+### Admin
+![Admin Dashboard](./screenshots/admin-dashboard.png)
+![Admin Members](./screenshots/admin-members.png)
 
 ---
 
